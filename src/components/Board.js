@@ -1,5 +1,5 @@
 import React from 'react';
-// import PropTypes from 'prop-types';
+import PropTypes from 'prop-types';
 import { BOARD_SIZE } from '../config/index';
 import Square from './Square';
 
@@ -27,5 +27,12 @@ class Board extends React.Component {
     );
   }
 }
+
+Board.propTypes = {
+  onClick: PropTypes.func.isRequired,
+  squares: PropTypes.arrayOf(PropTypes.string).isRequired,
+  // eslint-disable-next-line react/require-default-props
+  winSquares: PropTypes.arrayOf(PropTypes.number),
+};
 
 export default Board;
