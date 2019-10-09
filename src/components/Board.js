@@ -31,8 +31,7 @@ class Board extends React.Component {
 Board.propTypes = {
   onClick: PropTypes.func.isRequired,
   squares: PropTypes.arrayOf(PropTypes.string).isRequired,
-  // eslint-disable-next-line react/require-default-props
-  winSquares: PropTypes.arrayOf(PropTypes.number),
+  winSquares: PropTypes.string.isRequired,
 };
 
 export default Board;

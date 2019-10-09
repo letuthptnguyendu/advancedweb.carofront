@@ -14,12 +14,14 @@ function Square({ onClick, value, isWin }) {
   );
 }
 
+Square.defaultProps = {
+  value: '',
+};
+
 Square.propTypes = {
   onClick: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/require-default-props
   value: PropTypes.string,
-  // eslint-disable-next-line react/require-default-props
-  isWin: PropTypes.number,
+  isWin: PropTypes.bool.isRequired,
 };
 
 export default Square;
