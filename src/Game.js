@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 import { BOARD_SIZE } from './config';
 import calculateWinner from './utils/game';
 import Board from './components/Board';
-import { Header } from './components';
+import { Header } from './containers';
 
 class Game extends React.Component {
   changeSortType = () => {

@@ -12,7 +12,7 @@ function App({ username }) {
     <Switch>
       <Route path="/login" exact component={Login} />
       <Route path="/register" exact component={Register} />
-      {username ? <Route path="/" exact component={Game} /> : <Redirect to="/login" />}
+      <Route path="/" component={Game} />
       <Route path="*" component={() => null} />
     </Switch>
   );

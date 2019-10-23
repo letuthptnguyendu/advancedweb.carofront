@@ -15,14 +15,24 @@ function Header({ history, username }) {
             <Button color="inherit">Sign out</Button>
           </>
         ) : (
-          <Button
-            color="inherit"
-            onClick={() => {
-              history.push('/login');
-            }}
-          >
-            Login
-          </Button>
+          <>
+            <Button
+              color="inherit"
+              onClick={() => {
+                history.push('/login');
+              }}
+            >
+              Login
+            </Button>
+            <Button
+              color="inherit"
+              onClick={() => {
+                history.push('/register');
+              }}
+            >
+              Register
+            </Button>
+          </>
         )}
       </Toolbar>
     </AppBar>
