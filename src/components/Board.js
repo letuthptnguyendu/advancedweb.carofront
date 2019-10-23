@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { BOARD_SIZE } from '../config/index';
+import { BOARD_SIZE } from '../config';
 import Square from './Square';
 
 class Board extends React.Component {

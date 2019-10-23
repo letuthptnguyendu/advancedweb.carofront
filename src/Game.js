@@ -3,9 +3,10 @@ import './Game.css';
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { BOARD_SIZE } from './config/index';
-import calculateWinner from './utils/index';
+import { BOARD_SIZE } from './config';
+import calculateWinner from './utils/game';
 import Board from './components/Board';
+import { Header } from './components';
 
 class Game extends React.Component {
   changeSortType = () => {
@@ -78,25 +79,28 @@ class Game extends React.Component {
     }
 
     return (
-      <div className="game">
-        <div className="game-board">
-          <Board
-            winSquares={current.winSquares}
-            squares={current.squares}
-            onClick={i => this.handleClick(i)}
-          />
+      <>
+        <Header />
+        <div className="game">
+          <div className="game-board">
+            <Board
+              winSquares={current.winSquares}
+              squares={current.squares}
+              onClick={i => this.handleClick(i)}
+            />
+          </div>
+          <div className="game-info">
+            <div>{status}</div>
+            <button className="game-sort-button" type="button" onClick={this.changeSortType}>
+              {`Sort: ${sortType}`}
+            </button>
+            <button className="game-sort-button" type="button" onClick={this.clearSortType}>
+              Clear sorted method
+            </button>
+            <ol>{moves}</ol>
+          </div>
         </div>
-        <div className="game-info">
-          <div>{status}</div>
-          <button className="game-sort-button" type="button" onClick={this.changeSortType}>
-            {`Sort: ${sortType}`}
-          </button>
-          <button className="game-sort-button" type="button" onClick={this.clearSortType}>
-            Clear sorted method
-          </button>
-          <ol>{moves}</ol>
-        </div>
-      </div>
+      </>
     );
   }
 }

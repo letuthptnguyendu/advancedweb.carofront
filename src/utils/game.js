@@ -1,4 +1,4 @@
-import { BOARD_SIZE } from "../config/index";
+import { BOARD_SIZE } from '../config';
 
 export default function calculateWinner(squares) {
   for (let square = 0; square < BOARD_SIZE * BOARD_SIZE; square += 1) {
@@ -13,19 +13,19 @@ export default function calculateWinner(squares) {
         const currentValue = squares[square + i];
 
         if (currentValue) {
-          if (currentValue === "X") rowSum += 1;
-          else if (currentValue === "O") rowSum -= 1;
+          if (currentValue === 'X') rowSum += 1;
+          else if (currentValue === 'O') rowSum -= 1;
         }
       }
       if (rowSum === 5)
         return {
-          winner: "X",
-          winSquares: [square - 2, square - 1, square, square + 1, square + 2]
+          winner: 'X',
+          winSquares: [square - 2, square - 1, square, square + 1, square + 2],
         };
       if (rowSum === -5)
         return {
-          winner: "O",
-          winSquares: [square - 2, square - 1, square, square + 1, square + 2]
+          winner: 'O',
+          winSquares: [square - 2, square - 1, square, square + 1, square + 2],
         };
 
       // check column
@@ -33,31 +33,31 @@ export default function calculateWinner(squares) {
         const currentValue = squares[square + BOARD_SIZE * i];
 
         if (currentValue) {
-          if (currentValue === "X") colSum += 1;
-          else if (currentValue === "O") colSum -= 1;
+          if (currentValue === 'X') colSum += 1;
+          else if (currentValue === 'O') colSum -= 1;
         }
       }
       if (colSum === 5)
         return {
-          winner: "X",
+          winner: 'X',
           winSquares: [
             square + BOARD_SIZE * -2,
             square + BOARD_SIZE * -1,
             square,
             square + BOARD_SIZE * 1,
-            square + BOARD_SIZE * 2
-          ]
+            square + BOARD_SIZE * 2,
+          ],
         };
       if (colSum === -5)
         return {
-          winner: "O",
+          winner: 'O',
           winSquares: [
             square + BOARD_SIZE * -2,
             square + BOARD_SIZE * -1,
             square,
             square + BOARD_SIZE * 1,
-            square + BOARD_SIZE * 2
-          ]
+            square + BOARD_SIZE * 2,
+          ],
         };
 
       // check \\
@@ -65,31 +65,31 @@ export default function calculateWinner(squares) {
         const currentValue = squares[square + i + BOARD_SIZE * i];
 
         if (currentValue) {
-          if (currentValue === "X") leftSum += 1;
-          else if (currentValue === "O") leftSum -= 1;
+          if (currentValue === 'X') leftSum += 1;
+          else if (currentValue === 'O') leftSum -= 1;
         }
       }
       if (leftSum === 5)
         return {
-          winner: "X",
+          winner: 'X',
           winSquares: [
             square - 2 + BOARD_SIZE * -2,
             square - 1 + BOARD_SIZE * -1,
             square,
             square + 1 + BOARD_SIZE * 1,
-            square + 2 + BOARD_SIZE * 2
-          ]
+            square + 2 + BOARD_SIZE * 2,
+          ],
         };
       if (leftSum === -5)
         return {
-          winner: "O",
+          winner: 'O',
           winSquares: [
             square - 2 + BOARD_SIZE * -2,
             square - 1 + BOARD_SIZE * -1,
             square,
             square + 1 + BOARD_SIZE * 1,
-            square + 2 + BOARD_SIZE * 2
-          ]
+            square + 2 + BOARD_SIZE * 2,
+          ],
         };
 
       // check //
@@ -97,33 +97,33 @@ export default function calculateWinner(squares) {
         const currentValue = squares[square - i + BOARD_SIZE * i];
 
         if (currentValue) {
-          if (currentValue === "X") rightSum += 1;
-          else if (currentValue === "O") rightSum -= 1;
+          if (currentValue === 'X') rightSum += 1;
+          else if (currentValue === 'O') rightSum -= 1;
         }
       }
       if (rightSum === 5)
         return {
-          winner: "X",
+          winner: 'X',
           winSquares: [
             square + 2 + BOARD_SIZE * -2,
             square + 1 + BOARD_SIZE * -1,
             square,
             square - 1 + BOARD_SIZE * 1,
-            square - 2 + BOARD_SIZE * 2
-          ]
+            square - 2 + BOARD_SIZE * 2,
+          ],
         };
       if (rightSum === -5)
         return {
-          winner: "O",
+          winner: 'O',
           winSquares: [
             square + 2 + BOARD_SIZE * -2,
             square + 1 + BOARD_SIZE * -1,
             square,
             square - 1 + BOARD_SIZE * 1,
-            square - 2 + BOARD_SIZE * 2
-          ]
+            square - 2 + BOARD_SIZE * 2,
+          ],
         };
     }
   }
-  return "";
+  return '';
 }
