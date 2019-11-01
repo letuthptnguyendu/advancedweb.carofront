@@ -1,12 +1,13 @@
-import './Game.css';
-
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 
-import { BOARD_SIZE } from './config';
-import calculateWinner from './utils/game';
-import Board from './components/Board';
-import { Header } from './containers';
+import { CLEAR_SORT_TYPE, TOGGLE_SORT_TYPE, JUMP_TO, UPDATE_BOARD } from '../actions';
+
+import { BOARD_SIZE } from '../config';
+import calculateWinner from '../utils/game';
+import Board from './Board';
+import { HeaderLayout } from './layout';
 
 class Game extends React.Component {
   changeSortType = () => {
@@ -22,7 +23,7 @@ class Game extends React.Component {
   };
 
   handleClick(i) {
-    const { onUpdateBoard, history, xIsNext, stepNumber } = this.props;
+    const { onUpdateBoard, history, isAINext, stepNumber } = this.props;
 
     const newHistory = history.slice(0, stepNumber + 1);
     const current = newHistory[newHistory.length - 1];
@@ -30,10 +31,12 @@ class Game extends React.Component {
 
     if (current.winner || newSquares[i]) return;
 
-    newSquares[i] = xIsNext ? 'X' : 'O';
+    newSquares[i] = 'N';
 
     // if have a winner or the square have value already
     const tempWinner = calculateWinner(newSquares);
+
+    newSquares[Math.floor(Math.random() * 400)] = 'AI';
 
     onUpdateBoard(i, newSquares, newHistory, tempWinner);
   }
@@ -45,7 +48,7 @@ class Game extends React.Component {
   }
 
   render() {
-    const { history, stepNumber, sortType, xIsNext } = this.props;
+    const { history, stepNumber, sortType, isAINext } = this.props;
     const current = history[stepNumber];
     const moves = history
       .sort((a, b) => {
@@ -75,12 +78,11 @@ class Game extends React.Component {
     if (current.winner) {
       status = `Winner:  + ${current.winner}`;
     } else {
-      status = `Next player:  + ${xIsNext ? 'X' : 'O'}`;
+      status = `Next player:  + ${isAINext ? 'X' : 'O'}`;
     }
 
     return (
-      <>
-        <Header />
+      <HeaderLayout>
         <div className="game">
           <div className="game-board">
             <Board
@@ -100,7 +102,7 @@ class Game extends React.Component {
             <ol>{moves}</ol>
           </div>
         </div>
-      </>
+      </HeaderLayout>
     );
   }
 }
@@ -112,9 +114,33 @@ Game.propTypes = {
   onJumpTo: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   history: PropTypes.array.isRequired,
-  xIsNext: PropTypes.bool.isRequired,
+  isAINext: PropTypes.bool.isRequired,
   stepNumber: PropTypes.number.isRequired,
   sortType: PropTypes.string.isRequired,
 };
 
-export default Game;
+const mapStateToProps = state => {
+  return { ...state.gameReducer };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onChangeSortType: () => {
+      dispatch({ type: TOGGLE_SORT_TYPE });
+    },
+    onClearSortType: () => {
+      dispatch({ type: CLEAR_SORT_TYPE });
+    },
+    onJumpTo: step => {
+      dispatch({ type: JUMP_TO, step });
+    },
+    onUpdateBoard: (index, newSquares, newHistory, tempWinner) => {
+      dispatch({ type: UPDATE_BOARD, index, newSquares, newHistory, tempWinner });
+    },
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Game);

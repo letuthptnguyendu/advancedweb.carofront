@@ -2,27 +2,28 @@ import './index.css';
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { createStore, combineReducers, applyMiddleware } from 'redux';
+import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { createBrowserHistory } from 'history';
 import thunk from 'redux-thunk';
+import { CookiesProvider } from 'react-cookie';
 
-import { Game, Login, App } from './containers';
-import { gameReducer, authReducer } from './reducers';
-import { Register } from './pages';
+import { App } from './components';
+import { rootReducer } from './reducers';
 
-const rootReducer = combineReducers({ gameReducer, authReducer });
 const store = createStore(rootReducer, applyMiddleware(thunk));
 
 // eslint-disable-next-line import/prefer-default-export
 export const history = createBrowserHistory();
 
 ReactDOM.render(
-  <Provider store={store}>
-    <Router history={history}>
-      <App />
-    </Router>
-  </Provider>,
+  <CookiesProvider>
+    <Provider store={store}>
+      <Router history={history}>
+        <App />
+      </Router>
+    </Provider>
+  </CookiesProvider>,
   document.getElementById('root'),
 );

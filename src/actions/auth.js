@@ -1,18 +1,23 @@
-import axios from 'axios';
-
-import { SERVER_URL } from '../config';
+import { POST, GET } from '../utils/api';
 
 export const LOGIN = 'LOGIN';
 
-// eslint-disable-next-line import/prefer-default-export
-export const login = ({ username, password }) => dispatch => {
-  axios
-    .post(`${SERVER_URL}/user/login`, {
-      username,
-      password,
-    })
-    .then(res => {
-      dispatch({ type: LOGIN, username: res.data.user.username });
-    })
-    .catch(() => {});
-};
+export function fetchUserData(token) {
+  return dispatch => {
+    GET('/user/me', token)
+      .then(res => {
+        dispatch({ type: LOGIN, payload: res.data });
+      })
+      .catch(err => console.log(err));
+  };
+}
+
+export function updateUser(data, token) {
+  return dispatch => {
+    POST('/user/update', data, token)
+      .then(() => {
+        dispatch({ type: LOGIN, payload: data });
+      })
+      .catch(err => console.log(err));
+  };
+}

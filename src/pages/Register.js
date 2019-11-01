@@ -1,13 +1,17 @@
 import React from 'react';
-import { Container, Button, Avatar, TextField, Grid, Typography } from '@material-ui/core';
-import axios from 'axios';
+import { Container, Grid, Typography } from '@material-ui/core';
 
-import { SERVER_URL } from '../config';
+import { POST } from '../utils/api';
+import { TextInput, Button, Avatar } from '../components/common';
 
-function Register() {
+function Register({ history }) {
+  const [avatarFile, setAvatarFile] = React.useState('');
   const [username, setUsername] = React.useState('');
+  const [fullname, setFullname] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
   const [repeatedPassword, setRepeatPassword] = React.useState('');
+
   const [error, setError] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
   const [isCheckOn, setIsCheckOn] = React.useState(false);
@@ -26,34 +30,37 @@ function Register() {
     setError('');
     setIsLoading(true);
 
-    axios
-      .post(`${SERVER_URL}/user/register`, {
-        username,
-        password,
-      })
+    POST('/user/register', {
+      username,
+      password,
+      fullname,
+      email,
+    })
       .then(res => {
+        console.log('suc registry: ', res);
+
+        history.push('/login');
         setIsLoading(false);
       })
       .catch(err => {
-        setError(err);
+        console.log('err registry: ', err);
+
+        setError(err.message);
         setIsLoading(false);
       });
   }
   return (
-    <Container maxWidth="xs">
+    <Container maxWidth="xs" style={{ marginTop: 32 }}>
       <Grid spacing={2} container>
         <Grid item xs={12} container justify="center">
-          <Avatar
-            style={{ width: 80, height: 80 }}
-            src="https://tinyjpg.com/images/social/website.jpg"
-          />
+          <Avatar file={avatarFile} handleChangeFile={e => setAvatarFile(e.target.files[0])} />
         </Grid>
 
         <Grid item xs={12} style={{ textAlign: 'center' }}>
-          <Typography variant="h5">Đăng nhập</Typography>
+          <Typography variant="h5">Đăng ký 1 tài khoản mới</Typography>
           {error && (
-            <Typography style={{ color: 'red' }} variant="body1">
-              {error.message.toString()}
+            <Typography style={{ color: 'red' }} variant="caption">
+              {error.toString()}
             </Typography>
           )}
         </Grid>
@@ -61,22 +68,32 @@ function Register() {
           <form>
             <Grid spacing={2} container>
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
+                <TextInput
                   label="Tên tài khoản"
-                  autoFocus
                   error={!username && isCheckOn}
                   value={username}
                   onChange={e => setUsername(e.target.value)}
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
+                <TextInput
+                  label="Tên người dùng"
+                  error={!fullname && isCheckOn}
+                  value={fullname}
+                  onChange={e => setFullname(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextInput
+                  required={false}
+                  label="Email"
+                  error={!email && isCheckOn}
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextInput
                   value={password}
                   label="Mật khẩu"
                   type="password"
@@ -85,10 +102,7 @@ function Register() {
                 />
               </Grid>
               <Grid item xs={12}>
-                <TextField
-                  variant="outlined"
-                  required
-                  fullWidth
+                <TextInput
                   value={repeatedPassword}
                   label="Mật khẩu"
                   type="password"
@@ -100,9 +114,6 @@ function Register() {
                 <Button
                   disabled={isLoading}
                   type="submit"
-                  fullWidth
-                  variant="contained"
-                  color="primary"
                   onClick={e => {
                     e.preventDefault();
                     register();

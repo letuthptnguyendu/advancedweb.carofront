@@ -1,14 +1,14 @@
 import { LOGIN } from '../actions';
 
 const initState = {
-  username: '',
+  userInfo: '',
 };
 
 // eslint-disable-next-line import/prefer-default-export
 export const authReducer = (state = initState, action) => {
   switch (action.type) {
     case LOGIN:
-      return { ...state, username: action.username };
+      return { ...state, userInfo: { ...state.userInfo, ...action.payload } };
     default:
       return state;
   }

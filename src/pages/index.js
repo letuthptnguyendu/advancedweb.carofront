@@ -1,4 +1,5 @@
-import LoginComp from './Login';
+import Login from './Login';
 import Register from './Register';
+import Profile from './Profile';
 
-export { LoginComp, Register };
+export { Login, Profile, Register };
