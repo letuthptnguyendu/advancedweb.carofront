@@ -3,8 +3,8 @@ import { Route, Switch, Redirect } from 'react-router-dom';
 import { withCookies } from 'react-cookie';
 import { connect } from 'react-redux';
 
-import Game from './Game';
-import { Register, Login, Profile } from '../pages';
+import Game from '../pages/Game';
+import { Register, Login, Profile, Main } from '../pages';
 import { fetchUserData } from '../actions';
 
 function App({ cookies, ...props }) {
@@ -18,13 +18,14 @@ function App({ cookies, ...props }) {
 
   return (
     <Switch>
-      <Route path="/login" exact render={() => (!token ? <Login /> : <Redirect to="/" />)} />
+      <Route path="/login" exact render={() => (token ? <Redirect to="/" /> : <Login />)} />
       <Route path="/register" exact component={Register} />
 
-      <Route path="/" exact render={() => (token ? <Game /> : <Redirect to="/login" />)} />
+      <Route path="/" exact render={() => (token ? <Main /> : <Redirect to="/login" />)} />
       {token && (
         <>
           <Route path="/profile" exact component={Profile} />
+          <Route path="/game/:gid" exact component={Game} />
         </>
       )}
       <Route path="*" component={() => null} />

@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { Container, Grid, Avatar, Typography, IconButton } from '@material-ui/core';
+import { Container, Grid, Avatar } from '@material-ui/core';
 import { withCookies } from 'react-cookie';
 
 import { HeaderLayout } from '../components/layout';
@@ -11,12 +11,8 @@ class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      fullname: '',
+      fullname: this.props.userInfo ? this.props.userInfo.fullname : '',
     };
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.setState({ fullname: nextProps.userInfo.fullname });
   }
 
   render() {
@@ -43,6 +39,7 @@ class Profile extends Component {
                     <TextInput
                       label="Tên người dùng"
                       value={fullname}
+                      autoFocus={false}
                       onChange={e => this.setState({ fullname: e.target.value })}
                     />
                   </Grid>
