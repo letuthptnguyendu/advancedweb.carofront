@@ -16,7 +16,6 @@ export function updateUser(data, token) {
   return dispatch => {
     POST('/user/update', data, token)
       .then(() => {
-        console.log('letu resUpdate', data);
         dispatch({ type: LOGIN, payload: data });
       })
       .catch(err => console.log(err));

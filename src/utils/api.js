@@ -3,7 +3,6 @@ import axios from 'axios';
 import { SERVER_URL } from '../config/server';
 
 const POST = async (api, data, token) => {
-  console.log(data, token);
   return axios.post(`${SERVER_URL}${api}`, data, {
     headers: { Authorization: 'Bearer ' + token },
   });

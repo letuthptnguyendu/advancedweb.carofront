@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 function Square({ onClick, value, isWin }) {
   return (
     <button
-      style={{ backgroundColor: isWin ? 'red' : 'white' }}
+      style={{ backgroundColor: isWin ? 'green' : 'white', color: isWin ? 'white' : 'gray' }}
       type="button"
       className="square"
       onClick={onClick}

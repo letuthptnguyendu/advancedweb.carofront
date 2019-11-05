@@ -2,25 +2,39 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Container, Grid } from '@material-ui/core';
-import { CLEAR_SORT_TYPE, TOGGLE_SORT_TYPE, JUMP_TO, UPDATE_BOARD } from '../actions';
+import { withCookies } from 'react-cookie';
+
+import { JUMP_TO, UPDATE_BOARD, updateBoard } from '../actions';
 
 import { BOARD_SIZE } from '../config';
 import calculateWinner from '../utils/game';
 import Board from '../components/Board';
 import { HeaderLayout } from '../components/layout';
+import { GET } from '../utils/api';
 
 class Game extends React.Component {
-  // changeSortType = () => {
-  //   const { onChangeSortType } = this.props;
+  componentDidMount() {
+    GET(`/game/${this.props.match.params.gid}`, this.props.cookies.get('token'))
+      .then(res => {
+        res.data.history.map(position => {
+          const { history, stepNumber, xIsNext } = this.props;
 
-  //   onChangeSortType();
-  // };
+          const newHistory = history.slice(0, stepNumber + 1);
+          const current = newHistory[newHistory.length - 1];
+          const newSquares = current.squares.slice();
 
-  // clearSortType = () => {
-  //   const { onClearSortType } = this.props;
+          if (current.winner || newSquares[position]) return;
 
-  //   onClearSortType();
-  // };
+          newSquares[position] = xIsNext ? 'X' : 'O';
+
+          // if have a winner or the square have value already
+          const tempWinner = calculateWinner(newSquares);
+
+          this.props.onUpdateBoardOff(position, newSquares, newHistory, tempWinner);
+        });
+      })
+      .catch(err => console.log('err get new game', err));
+  }
 
   handleClick(i) {
     const { onUpdateBoard, history, stepNumber, xIsNext } = this.props;
@@ -37,8 +51,11 @@ class Game extends React.Component {
     const tempWinner = calculateWinner(newSquares);
 
     // newSquares[Math.floor(Math.random() * 400)] = 'O';
-
-    onUpdateBoard(i, newSquares, newHistory, tempWinner);
+    onUpdateBoard(
+      this.props.match.params.gid,
+      { position: i, newSquares, newHistory, tempWinner },
+      this.props.cookies.get('token'),
+    );
   }
 
   jumpTo(step) {
@@ -117,13 +134,7 @@ class Game extends React.Component {
             </Grid>
             <Grid item xs>
               {status}
-              {/* <button className="game-sort-button" type="button" onClick={this.changeSortType}>
-                {`Sort: ${sortType}`}
-              </button> */}
 
-              {/* <button className="game-sort-button" type="button" onClick={this.clearSortType}>
-                Clear sorted method
-              </button> */}
               {moves}
             </Grid>
           </Grid>
@@ -136,11 +147,8 @@ class Game extends React.Component {
 Game.propTypes = {
   onUpdateBoard: PropTypes.func.isRequired,
   onJumpTo: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
-  history: PropTypes.array.isRequired,
   xIsNext: PropTypes.bool.isRequired,
   stepNumber: PropTypes.number.isRequired,
-  // sortType: PropTypes.string.isRequired,
 };
 
 const mapStateToProps = state => {
@@ -149,17 +157,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    // onChangeSortType: () => {
-    //   dispatch({ type: TOGGLE_SORT_TYPE });
-    // },
-    // onClearSortType: () => {
-    //   dispatch({ type: CLEAR_SORT_TYPE });
-    // },
     onJumpTo: step => {
       dispatch({ type: JUMP_TO, step });
     },
-    onUpdateBoard: (index, newSquares, newHistory, tempWinner) => {
-      dispatch({ type: UPDATE_BOARD, index, newSquares, newHistory, tempWinner });
+    onUpdateBoard: (gid, { position, newSquares, newHistory, tempWinner }, token) => {
+      dispatch(updateBoard(gid, { position, newSquares, newHistory, tempWinner }, token));
+    },
+    onUpdateBoardOff: (position, newSquares, newHistory, tempWinner) => {
+      dispatch({ type: UPDATE_BOARD, position, newSquares, newHistory, tempWinner });
     },
   };
 };
@@ -167,4 +172,4 @@ const mapDispatchToProps = dispatch => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Game);
+)(withCookies(Game));

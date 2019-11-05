@@ -32,6 +32,7 @@ function Login({ history, userLogin, cookies }) {
 
         userLogin(res.data.user);
         cookies.set('token', res.data.token);
+        cookies.set('user_id', res.data.user._id);
 
         history.push('/');
         setIsLoading(false);

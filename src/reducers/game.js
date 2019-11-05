@@ -20,10 +20,6 @@ const initState = {
 // eslint-disable-next-line import/prefer-default-export
 export const gameReducer = (state = initState, action) => {
   switch (action.type) {
-    // case TOGGLE_SORT_TYPE:
-    //   return { ...state, sortType: state.sortType === 'asc' ? 'desc' : 'asc' };
-    // case CLEAR_SORT_TYPE:
-    //   return { ...state, sortType: '' };
     case JUMP_TO:
       return { ...state, stepNumber: action.step, xIsNext: action.step % 2 === 0 };
     case UPDATE_BOARD:
@@ -33,8 +29,7 @@ export const gameReducer = (state = initState, action) => {
           {
             winner: action.tempWinner && action.tempWinner.winner,
             winSquares: action.tempWinner && action.tempWinner.winSquares,
-            // order: action.newHistory.length,
-            position: action.index,
+            position: action.position,
             squares: action.newSquares,
           },
         ]),
