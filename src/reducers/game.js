@@ -1,4 +1,4 @@
-import { JUMP_TO, UPDATE_BOARD } from '../actions';
+import { JUMP_TO, UPDATE_BOARD, UNDO } from '../actions';
 import { BOARD_SIZE } from '../config';
 
 // receive state and action to return new state
@@ -34,7 +34,13 @@ export const gameReducer = (state = initState, action) => {
           },
         ]),
         stepNumber: action.newHistory.length,
-        xIsNext: !state.xIsNext,
+        xIsNext: typeof action.xIsNext == 'boolean' ? action.xIsNext : !state.xIsNext,
+      };
+    case UNDO:
+      return {
+        ...state,
+        history: state.history.slice(0, state.history.length - 1),
+        stepNumber: state.stepNumber - 1,
       };
     default:
       return state;

@@ -4,6 +4,7 @@ import { withCookies } from 'react-cookie';
 import { connect } from 'react-redux';
 
 import Game from '../pages/Game';
+import GamePvP from '../pages/GamePvP';
 import { Register, Login, Profile, Main } from '../pages';
 import { fetchUserData } from '../actions';
 
@@ -26,6 +27,7 @@ function App({ cookies, ...props }) {
         <>
           <Route path="/profile" exact component={Profile} />
           <Route path="/game/:gid" exact component={Game} />
+          <Route path="/game-pvp/:gid" exact component={GamePvP} />
         </>
       )}
       <Route path="*" component={() => null} />

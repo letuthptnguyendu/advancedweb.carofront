@@ -2,12 +2,15 @@ import React from 'react';
 import { withCookies } from 'react-cookie';
 import socketIOClient from 'socket.io-client';
 import { Dialog, DialogContentText, DialogContent } from '@material-ui/core';
-
+import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+
+import { UPDATE_BOARD } from '../actions';
 import { GET } from '../utils/api';
 import { HeaderLayout } from '../components/layout';
 import { Button } from '../components/common';
 import { SOCKET_URL } from '../config/server';
+import { BOARD_SIZE } from '../config/const';
 
 class Main extends React.Component {
   constructor(props) {
@@ -18,11 +21,14 @@ class Main extends React.Component {
     };
   }
 
-  componentDidMount() {}
+  resetGameStore = () => {
+    this.props.onUpdateBoardOff('', Array(BOARD_SIZE * BOARD_SIZE).fill(null), [], '');
+  };
 
   onPvc = () => {
     GET('/game/new', this.props.cookies.get('token'))
       .then(res => {
+        this.resetGameStore();
         this.props.history.push(`/game/${res.data._id}`);
       })
       .catch(err => console.log('err get new game', err));
@@ -35,9 +41,9 @@ class Main extends React.Component {
     const userId = this.props.cookies.get('user_id');
 
     this.state.socket.on('join-game', data => {
-      console.log(data);
       if (data.user_id === userId || data.user2_id === userId) {
-        console.log('datazoooooooooooooooo');
+        this.state.socket.disconnect();
+        this.resetGameStore();
         this.props.history.push(`/game-pvp/${data._id}`);
       }
     });
@@ -85,4 +91,22 @@ class Main extends React.Component {
   }
 }
 
-export default withCookies(withRouter(Main));
+const mapDispatchToProps = dispatch => {
+  return {
+    onUpdateBoardOff: (position, newSquares, newHistory, tempWinner) => {
+      dispatch({
+        type: UPDATE_BOARD,
+        position,
+        newSquares,
+        newHistory,
+        tempWinner,
+        xIsNext: true,
+      });
+    },
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps,
+)(withCookies(withRouter(Main)));

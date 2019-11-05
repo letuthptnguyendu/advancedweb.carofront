@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Container, Grid } from '@material-ui/core';
 import { withCookies } from 'react-cookie';
 
-import { JUMP_TO, UPDATE_BOARD, updateBoard } from '../actions';
+import { JUMP_TO, UPDATE_BOARD, updateBoard, jumpTo } from '../actions';
 
 import { BOARD_SIZE } from '../config';
 import calculateWinner from '../utils/game';
@@ -14,9 +14,11 @@ import { GET } from '../utils/api';
 
 class Game extends React.Component {
   componentDidMount() {
+    this.props.onUpdateBoardOff('', Array(BOARD_SIZE * BOARD_SIZE).fill(null), [], '');
+
     GET(`/game/${this.props.match.params.gid}`, this.props.cookies.get('token'))
       .then(res => {
-        res.data.history.map(position => {
+        res.data.history.map((position, index) => {
           const { history, stepNumber, xIsNext } = this.props;
 
           const newHistory = history.slice(0, stepNumber + 1);
@@ -25,7 +27,7 @@ class Game extends React.Component {
 
           if (current.winner || newSquares[position]) return;
 
-          newSquares[position] = xIsNext ? 'X' : 'O';
+          newSquares[position] = history.length % 2 === 1 ? 'X' : 'O';
 
           // if have a winner or the square have value already
           const tempWinner = calculateWinner(newSquares);
@@ -43,14 +45,21 @@ class Game extends React.Component {
     const current = newHistory[newHistory.length - 1];
     const newSquares = current.squares.slice();
 
-    if (current.winner || newSquares[i]) return;
+    if (current.winner) return;
+
+    if (i === 'random')
+      while (i === 'random') {
+        i = Math.floor(Math.random() * 400);
+        if (current.winner || newSquares[i]) i = 'random';
+      }
+
+    if (newSquares[i]) return;
 
     newSquares[i] = xIsNext ? 'X' : 'O';
 
     // if have a winner or the square have value already
     const tempWinner = calculateWinner(newSquares);
 
-    // newSquares[Math.floor(Math.random() * 400)] = 'O';
     onUpdateBoard(
       this.props.match.params.gid,
       { position: i, newSquares, newHistory, tempWinner },
@@ -61,7 +70,7 @@ class Game extends React.Component {
   jumpTo(step) {
     const { onJumpTo } = this.props;
 
-    onJumpTo(step);
+    onJumpTo(this.props.match.params.gid, step, this.props.cookies.get('token'));
   }
 
   render() {
@@ -70,10 +79,10 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {
       const text = move
-        ? `  Go to move #${move} - ${step.position % BOARD_SIZE}: ${Math.floor(
+        ? `  Quay về #${move} - ${step.position % BOARD_SIZE}: ${Math.floor(
             step.position / BOARD_SIZE,
           )}`
-        : 'Go to game start';
+        : 'Bắt đầu';
 
       return (
         <button
@@ -105,7 +114,7 @@ class Game extends React.Component {
             margin: '0 0 1rem',
             backgroundColor: 'green',
           }}
-        >{`Winner:  + ${current.winner}`}</div>
+        >{`Thắng:  + ${current.winner}`}</div>
       );
     } else {
       status = (
@@ -117,7 +126,7 @@ class Game extends React.Component {
             margin: '0 0 1rem',
             backgroundColor: 'orange',
           }}
-        >{`Next player:  + ${xIsNext ? 'X' : 'O'}`}</div>
+        >{`Tiếp theo:  + ${xIsNext ? 'Bạn' : 'Máy'}`}</div>
       );
     }
 
@@ -129,7 +138,14 @@ class Game extends React.Component {
               <Board
                 winSquares={current.winSquares}
                 squares={current.squares}
-                onClick={i => this.handleClick(i)}
+                onClick={
+                  xIsNext
+                    ? i => {
+                        this.handleClick(i);
+                        setTimeout(() => this.handleClick('random'), 1000);
+                      }
+                    : () => {}
+                }
               />
             </Grid>
             <Grid item xs>
@@ -157,14 +173,14 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
   return {
-    onJumpTo: step => {
-      dispatch({ type: JUMP_TO, step });
+    onJumpTo: (gid, step, token) => {
+      dispatch(jumpTo(gid, step, token));
     },
     onUpdateBoard: (gid, { position, newSquares, newHistory, tempWinner }, token) => {
       dispatch(updateBoard(gid, { position, newSquares, newHistory, tempWinner }, token));
     },
     onUpdateBoardOff: (position, newSquares, newHistory, tempWinner) => {
-      dispatch({ type: UPDATE_BOARD, position, newSquares, newHistory, tempWinner });
+      dispatch({ type: UPDATE_BOARD, position, newSquares, newHistory, tempWinner, xIsNext: true });
     },
   };
 };
